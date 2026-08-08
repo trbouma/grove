@@ -46,6 +46,8 @@ poetry run pytest
 | Variable | Default | Meaning |
 | --- | --- | --- |
 | `GROVE_DATA_DIR` | `./data` | Persistent SQLite metadata and blob files. |
+| `GROVE_DATA_PATH` | `./data` | Docker host directory mounted at `/data`. |
+| `GROVE_UID` / `GROVE_GID` | `1000` / `1000` | Container process identity; should own the Docker data path. |
 | `GROVE_PUBLIC_URL` | `http://127.0.0.1:8000` | Public base URL used in blob descriptors. |
 | `GROVE_SERVER_NAME` | hostname from public URL | Lowercase domain used to validate BUD-11 `server` tags. |
 | `GROVE_MAX_BLOB_SIZE` | `104857600` | Maximum blob size in bytes (100 MiB). |
@@ -54,6 +56,24 @@ poetry run pytest
 Production deployments should use an HTTPS reverse proxy and set
 `GROVE_PUBLIC_URL` to the externally visible URL. Keep `GROVE_DATA_DIR` on a
 persistent volume.
+
+For Docker, choose an explicit persistent host directory and ensure it is owned
+by the UID and GID used by the container:
+
+```bash
+sudo install -d -o "$(id -u)" -g "$(id -g)" /mnt/bitcoin/blossom
+```
+
+Then set:
+
+```env
+GROVE_DATA_PATH=/mnt/bitcoin/blossom
+GROVE_UID=1000
+GROVE_GID=1000
+```
+
+Use the actual values returned by `id -u` and `id -g` rather than assuming they
+are `1000`.
 
 ## Storage model
 

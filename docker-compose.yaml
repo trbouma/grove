@@ -6,6 +6,7 @@ services:
     image: ${GROVE_IMAGE:-safebox-grove:local}
     container_name: grove
     restart: unless-stopped
+    user: "${GROVE_UID:-1000}:${GROVE_GID:-1000}"
     ports:
       - "${GROVE_BIND_ADDRESS:-127.0.0.1}:${GROVE_PORT:-8000}:8000"
     environment:
@@ -15,7 +16,4 @@ services:
       GROVE_MAX_BLOB_SIZE: ${GROVE_MAX_BLOB_SIZE:-104857600}
       GROVE_AUTH_CLOCK_SKEW_SECONDS: ${GROVE_AUTH_CLOCK_SKEW_SECONDS:-30}
     volumes:
-      - grove-data:/data
-
-volumes:
-  grove-data:
+      - "${GROVE_DATA_PATH:-./data}:/data"
