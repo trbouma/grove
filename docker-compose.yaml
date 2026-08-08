@@ -1,0 +1,21 @@
+services:
+  grove:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${GROVE_IMAGE:-safebox-grove:local}
+    container_name: grove
+    restart: unless-stopped
+    ports:
+      - "${GROVE_BIND_ADDRESS:-127.0.0.1}:${GROVE_PORT:-8000}:8000"
+    environment:
+      GROVE_DATA_DIR: /data
+      GROVE_PUBLIC_URL: ${GROVE_PUBLIC_URL:-http://127.0.0.1:8000}
+      GROVE_SERVER_NAME: ${GROVE_SERVER_NAME:-}
+      GROVE_MAX_BLOB_SIZE: ${GROVE_MAX_BLOB_SIZE:-104857600}
+      GROVE_AUTH_CLOCK_SKEW_SECONDS: ${GROVE_AUTH_CLOCK_SKEW_SECONDS:-30}
+    volumes:
+      - grove-data:/data
+
+volumes:
+  grove-data:

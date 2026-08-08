@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "safebox-grove"
+version = "0.1.0"
+description = "A lean Python Blossom server for opaque, content-addressed blobs"
+authors = ["Tim Bouma"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "grove" }]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.14"
+coincurve = ">=20.0.0,<22.0.0"
+fastapi = ">=0.115.0,<1.0.0"
+uvicorn = { version = ">=0.34.0,<1.0.0", extras = ["standard"] }
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.3.0,<10.0.0"
+httpx2 = "^2.9.1"
+ruff = "^0.16.2"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
