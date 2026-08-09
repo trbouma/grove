@@ -43,7 +43,8 @@ class Settings:
             or parsed.path not in {"", "/"}
         ):
             raise RuntimeError(
-                "GROVE_PUBLIC_URL must be an origin URL without credentials, path, query, or fragment"
+                "GROVE_PUBLIC_URL must be an origin URL without credentials, "
+                "path, query, or fragment"
             )
         configured_name = os.getenv("GROVE_SERVER_NAME", "").strip().lower().rstrip(".")
         server_name = configured_name or parsed.hostname.lower().rstrip(".")

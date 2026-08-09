@@ -174,7 +174,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             if len(auth.blob_hashes) != 1:
                 return _error(
                     401,
-                    "Upload authorization must contain exactly one blob hash when X-SHA-256 is absent",
+                    "Upload authorization must contain exactly one blob hash "
+                    "when X-SHA-256 is absent",
                 )
             x_sha_256 = auth.blob_hashes[0]
         try:

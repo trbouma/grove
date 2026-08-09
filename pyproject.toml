@@ -6,6 +6,9 @@ authors = ["Tim Bouma"]
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "grove" }]
+homepage = "https://trbouma.github.io/grove/"
+repository = "https://github.com/trbouma/grove"
+keywords = ["blossom", "nostr", "storage", "content-addressed", "safebox"]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"
@@ -17,6 +20,16 @@ uvicorn = { version = ">=0.34.0,<1.0.0", extras = ["standard"] }
 pytest = ">=8.3.0,<10.0.0"
 httpx2 = "^2.9.1"
 ruff = "^0.16.2"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs-material = ">=9,<10"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

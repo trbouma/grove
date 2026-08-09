@@ -1,4 +1,16 @@
-# Grove
+<p align="center">
+  <img src="website/assets/images/grove-logo.png" width="180" alt="Grove logo showing three oak trees joined into one canopy">
+</p>
+
+<h1 align="center">Grove</h1>
+
+<p align="center"><strong>A lean Python Blossom server for opaque, content-addressed blobs.</strong></p>
+
+<p align="center">
+  <a href="https://trbouma.github.io/grove/">Documentation</a> ·
+  <a href="https://github.com/hzrd149/blossom">Blossom protocol</a> ·
+  <a href="SECURITY.md">Security</a>
+</p>
 
 Grove is a lean Python [Blossom](https://github.com/hzrd149/blossom)
 server. It stores opaque bytes by SHA-256 hash and uses signed Nostr events to
@@ -7,6 +19,9 @@ authorize upload, listing, and deletion.
 **Acorn controls and encrypts records. Grove stores the resulting opaque
 blobs.** Grove does not need an Acorn private key and cannot interpret
 Acorn-encrypted content.
+
+The full operator and integration guide is available at
+[trbouma.github.io/grove](https://trbouma.github.io/grove/).
 
 ## Implemented protocol surface
 
@@ -48,6 +63,8 @@ poetry run pytest
 | `GROVE_DATA_DIR` | `./data` | Persistent SQLite metadata and blob files. |
 | `GROVE_DATA_PATH` | `./data` | Docker host directory mounted at `/data`. |
 | `GROVE_UID` / `GROVE_GID` | `1000` / `1000` | Container process identity; should own the Docker data path. |
+| `GROVE_BIND_ADDRESS` | `127.0.0.1` | Docker host address on which the published port listens. |
+| `GROVE_PORT` | `8000` | Docker host port mapped to Grove. |
 | `GROVE_PUBLIC_URL` | `http://127.0.0.1:8000` | Public base URL used in blob descriptors. |
 | `GROVE_SERVER_NAME` | hostname from public URL | Lowercase domain used to validate BUD-11 `server` tags. |
 | `GROVE_MAX_BLOB_SIZE` | `104857600` | Maximum blob size in bytes (100 MiB). |
@@ -114,3 +131,18 @@ valid `x` hash. Grove treats that signed hash as the expected digest and still
 rejects any body that does not match it.
 
 See [SECURITY.md](SECURITY.md) for trust boundaries and residual risks.
+
+## Documentation site
+
+Install the documentation dependency group and preview locally:
+
+```bash
+poetry install --with docs
+poetry run mkdocs serve
+```
+
+Open `http://127.0.0.1:8000`. Build the same strict site produced by CI with:
+
+```bash
+poetry run mkdocs build --strict
+```
