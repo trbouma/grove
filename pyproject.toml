@@ -10,6 +10,9 @@ homepage = "https://trbouma.github.io/grove/"
 repository = "https://github.com/trbouma/grove"
 keywords = ["blossom", "nostr", "storage", "content-addressed", "safebox"]
 
+[tool.poetry.scripts]
+grove = "grove.cli:main"
+
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"
 coincurve = ">=20.0.0,<22.0.0"

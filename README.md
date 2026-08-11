@@ -45,10 +45,16 @@ to match Acorn deployments:
 ```bash
 poetry install
 cp .env.example .env
-poetry run uvicorn grove.main:app --host 127.0.0.1 --port 8000 --reload
+poetry run grove --host 127.0.0.1 --port 8000 --data-dir ./data
 ```
 
 Open `http://127.0.0.1:8000/docs` for the generated API documentation.
+
+To run on another local port:
+
+```bash
+poetry run grove --host 127.0.0.1 --port 8001 --data-dir ./data
+```
 
 Run the tests:
 
