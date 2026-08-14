@@ -7,6 +7,11 @@ description: The confidentiality and availability boundary between Acorn and Gro
 
 Acorn and Grove have complementary responsibilities.
 
+Their boundary reflects the wider Mainstay product-family principle: **good
+boundaries, not barriers**. Acorn and Grove remain independently deployable and
+replaceable, while standard hashes, signed authorization, and Blossom retrieval
+keep encrypted records portable across compatible infrastructure.
+
 | Component | Responsibility |
 | --- | --- |
 | **Acorn** | Encrypts attachments, protects the blob key inside an encrypted private record, signs Blossom authorization, and verifies retrieved content. |

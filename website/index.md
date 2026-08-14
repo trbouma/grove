@@ -79,6 +79,18 @@ Grove makes about every stored blob.
 [Understand the Acorn boundary](acorn-integration.md){ .md-button }
 [Read the security statement](security.md){ .md-button }
 
+## Part of the Mainstay product family
+
+Grove is an independently useful storage service and a sibling in the Mainstay
+product family. Mainstay is the unified application, Lockbox is the
+hardware-first local appliance, and continuity is the shared capability.
+
+**Good boundaries, not barriers.** Grove provides opaque, content-addressed
+blob availability; Acorn provides encryption and recovery; Spurline preserves
+the associated relay events; and Safebox Web provides current user workflows.
+The Blossom protocol lets those responsibilities cooperate without requiring
+Grove to become the application, key custodian, or system of record.
+
 ## Implemented today
 
 Grove implements retrieval, range requests, streaming upload, upload
