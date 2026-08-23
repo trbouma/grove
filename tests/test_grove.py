@@ -70,6 +70,24 @@ def settings(tmp_path, *, max_size: int = 1024 * 1024) -> Settings:
     )
 
 
+def test_browser_homepage_is_friendly_and_keeps_json_api(tmp_path) -> None:
+    with TestClient(create_app(settings(tmp_path))) as client:
+        homepage = client.get("/", headers={"Accept": "text/html"})
+        information = client.get("/", headers={"Accept": "application/json"})
+        logo = client.get("/assets/grove-logo.png")
+
+    assert homepage.status_code == 200
+    assert homepage.headers["content-type"].startswith("text/html")
+    assert "Grove" in homepage.text
+    assert "https://grove.example" in homepage.text
+    assert "Copy server URL" in homepage.text
+    assert "Local-first encrypted blob storage" in homepage.text
+    assert information.status_code == 200
+    assert information.json()["buds"] == ["01", "02", "06", "11", "12"]
+    assert logo.status_code == 200
+    assert logo.headers["content-type"] == "image/png"
+
+
 def upload(client: TestClient, key: PrivateKey, body: bytes, media_type="text/plain"):
     digest = hashlib.sha256(body).hexdigest()
     response = client.put(

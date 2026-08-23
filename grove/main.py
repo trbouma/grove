@@ -4,14 +4,16 @@ from __future__ import annotations
 
 import re
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Header, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 
 from grove import __version__
 from grove.auth import AuthorizationError, validate_authorization
 from grove.config import Settings
+from grove.homepage import render_homepage
 from grove.store import BlobStore, BlobTooLarge, HashMismatch, normalized_media_type
 
 BLOB_PATH = re.compile(r"^(?P<sha256>[0-9a-f]{64})(?:\.[A-Za-z0-9]{1,16})?$")
@@ -117,14 +119,36 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
         return response
 
-    @app.get("/")
-    async def server_information():
+    def information_response():
         return {
             "name": "Grove",
             "version": __version__,
             "description": "Blossom blobs stored simply",
             "buds": ["01", "02", "06", "11", "12"],
         }
+
+    @app.get("/", response_model=None)
+    async def server_information(request: Request):
+        information = information_response()
+        if "text/html" in request.headers.get("accept", "").lower():
+            return HTMLResponse(
+                render_homepage(
+                    version=__version__,
+                    public_url=configured.public_url,
+                    server_name=configured.server_name,
+                    max_blob_size=configured.max_blob_size,
+                    supported_buds=information["buds"],
+                )
+            )
+        return information
+
+    @app.get("/assets/grove-logo.png", include_in_schema=False)
+    async def grove_logo():
+        return FileResponse(
+            Path(__file__).with_name("assets") / "grove-logo.png",
+            media_type="image/png",
+            headers={"Cache-Control": "public, max-age=86400"},
+        )
 
     @app.get("/health")
     async def health():

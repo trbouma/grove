@@ -42,6 +42,14 @@ docker compose build --pull
 docker compose up -d --force-recreate
 ```
 
+For a routine source deployment, the included refresh script pulls the latest
+commit, rebuilds and recreates the container, then waits for Grove's health
+check to pass:
+
+```bash
+./refresh-containers.sh
+```
+
 Stop the service without deleting its persistent data:
 
 ```bash

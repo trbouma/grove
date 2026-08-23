@@ -17,7 +17,11 @@ Grove implements a bounded subset of the
 | `GET` | `/list/<pubkey>` | Signed `list` event from that pubkey | Return cursor-paginated owner descriptors. |
 | `DELETE` | `/<sha256>[.ext]` | Signed `delete` event | Remove the caller's owner reference. |
 | `GET` | `/health` | Public | Return `{"status":"ok"}`. |
-| `GET` | `/` | Public | Return server name, version, and implemented BUD identifiers. |
+| `GET` | `/` | Public | Return the browser homepage or JSON server information according to `Accept`. |
+
+Browser requests that accept `text/html` receive the Grove instance page.
+Protocol clients continue to receive the server name, version, and implemented
+BUD identifiers as JSON.
 
 ## Authorization
 
