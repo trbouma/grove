@@ -7,6 +7,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from grove.identity import service_npub
+
+SERVICE_MANAGEMENT_MODES = {"independent", "mainstay-managed"}
+
 
 def _positive_int(name: str, default: int) -> int:
     raw = os.getenv(name, str(default)).strip()
@@ -26,6 +30,20 @@ class Settings:
     server_name: str
     max_blob_size: int
     auth_clock_skew_seconds: int
+    service_nsec: str | None = None
+    service_management: str = "independent"
+
+    def __post_init__(self) -> None:
+        if self.service_management not in SERVICE_MANAGEMENT_MODES:
+            raise ValueError("unsupported Grove service management mode")
+        if self.service_management == "mainstay-managed" and not self.service_nsec:
+            raise ValueError("mainstay-managed Grove requires GROVE_SERVICE_NSEC")
+        if self.service_nsec:
+            service_npub(self.service_nsec)
+
+    @property
+    def service_npub(self) -> str | None:
+        return service_npub(self.service_nsec) if self.service_nsec else None
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -58,4 +76,8 @@ class Settings:
             server_name=server_name,
             max_blob_size=_positive_int("GROVE_MAX_BLOB_SIZE", 100 * 1024 * 1024),
             auth_clock_skew_seconds=_positive_int("GROVE_AUTH_CLOCK_SKEW_SECONDS", 30),
+            service_nsec=os.getenv("GROVE_SERVICE_NSEC") or None,
+            service_management=os.getenv(
+                "GROVE_SERVICE_MANAGEMENT", "independent"
+            ),
         )

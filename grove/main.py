@@ -14,6 +14,7 @@ from grove import __version__
 from grove.auth import AuthorizationError, validate_authorization
 from grove.config import Settings
 from grove.homepage import render_homepage
+from grove.identity import bind_service_identity
 from grove.store import BlobStore, BlobTooLarge, HashMismatch, normalized_media_type
 
 BLOB_PATH = re.compile(r"^(?P<sha256>[0-9a-f]{64})(?:\.[A-Za-z0-9]{1,16})?$")
@@ -75,6 +76,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
+        bind_service_identity(configured.data_dir, npub=configured.service_npub)
         store.initialize()
         yield
 
@@ -124,6 +126,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "name": "Grove",
             "version": __version__,
             "description": "Blossom blobs stored simply",
+            "service_identity": {
+                "npub": configured.service_npub,
+                "type": "blossom",
+                "management": configured.service_management,
+                "state": (
+                    "uncommissioned" if configured.service_npub else "unconfigured"
+                ),
+                "descriptor_event_id": None,
+                "operator": None,
+            },
             "buds": ["01", "02", "06", "11", "12"],
         }
 
@@ -138,6 +150,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     server_name=configured.server_name,
                     max_blob_size=configured.max_blob_size,
                     supported_buds=information["buds"],
+                    service_npub=configured.service_npub,
                 )
             )
         return information

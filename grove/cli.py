@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -58,5 +59,7 @@ def main() -> None:
         server_name=server_name,
         max_blob_size=args.max_blob_size,
         auth_clock_skew_seconds=args.auth_clock_skew_seconds,
+        service_nsec=os.getenv("GROVE_SERVICE_NSEC") or None,
+        service_management=os.getenv("GROVE_SERVICE_MANAGEMENT", "independent"),
     )
     uvicorn.run(create_app(settings), host=args.host, port=args.port)

@@ -75,10 +75,19 @@ poetry run pytest
 | `GROVE_SERVER_NAME` | hostname from public URL | Lowercase domain used to validate BUD-11 `server` tags. |
 | `GROVE_MAX_BLOB_SIZE` | `104857600` | Maximum blob size in bytes (100 MiB). |
 | `GROVE_AUTH_CLOCK_SKEW_SECONDS` | `30` | Permitted future clock skew for authorization events. |
+| `GROVE_SERVICE_NSEC` | unset | Stable Nostr service private key, encoded as 32-byte hex or `nsec`. |
+| `GROVE_SERVICE_MANAGEMENT` | `independent` | Identity custody mode: `independent` or `mainstay-managed`. |
 
 Production deployments should use an HTTPS reverse proxy and set
 `GROVE_PUBLIC_URL` to the externally visible URL. Keep `GROVE_DATA_DIR` on a
 persistent volume.
+
+When `GROVE_SERVICE_NSEC` is configured, Grove exposes the derived service
+`npub` in its JSON and browser homepages and records that public identity in
+`GROVE_DATA_DIR/service-identity.json`. Grove refuses to start if a later
+configuration omits or changes the key for that persistent data. The bootstrap
+identity is initially uncommissioned and does not replace blob hashes or owner
+public keys.
 
 For Docker, choose an explicit persistent host directory and ensure it is owned
 by the UID and GID used by the container:

@@ -5,11 +5,21 @@ import hashlib
 import json
 import time
 
+import pytest
 from coincurve import PrivateKey, PublicKeyXOnly
 from starlette.testclient import TestClient
 
 from grove.config import Settings
+from grove.identity import service_npub
 from grove.main import create_app
+
+SERVICE_NSEC = "11" * 32
+SERVICE_NSEC_BECH32 = (
+    "nsec1zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zygs4rm7hz"
+)
+SERVICE_NPUB = (
+    "npub1fu64hh9hes90w2808n8tjc2ajp5yhddjef0ctx4s7zmsgp6cwx4qgy4eg9"
+)
 
 
 def signing_key() -> PrivateKey:
@@ -60,13 +70,16 @@ def authorization(
     return f"Nostr {encoded}"
 
 
-def settings(tmp_path, *, max_size: int = 1024 * 1024) -> Settings:
+def settings(
+    tmp_path, *, max_size: int = 1024 * 1024, service_nsec: str | None = None
+) -> Settings:
     return Settings(
         data_dir=tmp_path / "data",
         public_url="https://grove.example",
         server_name="grove.example",
         max_blob_size=max_size,
         auth_clock_skew_seconds=30,
+        service_nsec=service_nsec,
     )
 
 
@@ -84,8 +97,55 @@ def test_browser_homepage_is_friendly_and_keeps_json_api(tmp_path) -> None:
     assert "Local-first encrypted blob storage" in homepage.text
     assert information.status_code == 200
     assert information.json()["buds"] == ["01", "02", "06", "11", "12"]
+    assert information.json()["service_identity"]["state"] == "unconfigured"
     assert logo.status_code == 200
     assert logo.headers["content-type"] == "image/png"
+
+
+def test_service_identity_accepts_hex_and_nsec_encoding() -> None:
+    assert service_npub(SERVICE_NSEC) == SERVICE_NPUB
+    assert service_npub(SERVICE_NSEC_BECH32) == SERVICE_NPUB
+
+
+def test_service_identity_is_reported_and_bound_to_persistent_data(tmp_path) -> None:
+    configured = settings(tmp_path, service_nsec=SERVICE_NSEC)
+    with TestClient(create_app(configured)) as client:
+        information = client.get("/", headers={"Accept": "application/json"})
+        homepage = client.get("/", headers={"Accept": "text/html"})
+
+    identity = information.json()["service_identity"]
+    assert identity == {
+        "npub": configured.service_npub,
+        "type": "blossom",
+        "management": "independent",
+        "state": "uncommissioned",
+        "descriptor_event_id": None,
+        "operator": None,
+    }
+    assert configured.service_npub in homepage.text
+    sentinel = json.loads(
+        (configured.data_dir / "service-identity.json").read_text(encoding="utf-8")
+    )
+    assert sentinel["npub"] == configured.service_npub
+    assert SERVICE_NSEC not in information.text
+
+
+def test_service_identity_cannot_change_for_existing_data(tmp_path) -> None:
+    with TestClient(create_app(settings(tmp_path, service_nsec=SERVICE_NSEC))):
+        pass
+
+    with pytest.raises(RuntimeError, match="does not match the recorded"):
+        with TestClient(create_app(settings(tmp_path, service_nsec="22" * 32))):
+            pass
+
+
+def test_recorded_service_identity_requires_private_key(tmp_path) -> None:
+    with TestClient(create_app(settings(tmp_path, service_nsec=SERVICE_NSEC))):
+        pass
+
+    with pytest.raises(RuntimeError, match="GROVE_SERVICE_NSEC is required"):
+        with TestClient(create_app(settings(tmp_path))):
+            pass
 
 
 def upload(client: TestClient, key: PrivateKey, body: bytes, media_type="text/plain"):
