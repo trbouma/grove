@@ -128,6 +128,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "description": "Blossom blobs stored simply",
             "service_identity": {
                 "npub": configured.service_npub,
+                "fips_ipv6_address": configured.service_fips_ipv6_address,
                 "type": "blossom",
                 "management": configured.service_management,
                 "state": (
@@ -151,6 +152,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     max_blob_size=configured.max_blob_size,
                     supported_buds=information["buds"],
                     service_npub=configured.service_npub,
+                    service_fips_ipv6_address=configured.service_fips_ipv6_address,
                 )
             )
         return information

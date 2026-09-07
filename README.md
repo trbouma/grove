@@ -16,6 +16,9 @@ Grove is a lean Python [Blossom](https://github.com/hzrd149/blossom)
 server. It stores opaque bytes by SHA-256 hash and uses signed Nostr events to
 authorize upload, listing, and deletion.
 
+Grove uses [Stroma](https://github.com/trbouma/stroma) for Nostr service-key
+handling and deterministic FIPS IPv6 address derivation.
+
 **Acorn controls and encrypts records. Grove stores the resulting opaque
 blobs.** Grove does not need an Acorn private key and cannot interpret
 Acorn-encrypted content.
@@ -87,7 +90,9 @@ When `GROVE_SERVICE_NSEC` is configured, Grove exposes the derived service
 `GROVE_DATA_DIR/service-identity.json`. Grove refuses to start if a later
 configuration omits or changes the key for that persistent data. The bootstrap
 identity is initially uncommissioned and does not replace blob hashes or owner
-public keys.
+public keys. The homepages also report the deterministic FIPS `fd00::/8` IPv6
+address derived from the service `npub`; this is an address hint, not evidence
+that Grove is currently attached to a FIPS node.
 
 For Docker, choose an explicit persistent host directory and ensure it is owned
 by the UID and GID used by the container:

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from grove.identity import service_npub
+from grove.identity import fips_ipv6_address, service_npub
 
 SERVICE_MANAGEMENT_MODES = {"independent", "mainstay-managed"}
 
@@ -44,6 +44,10 @@ class Settings:
     @property
     def service_npub(self) -> str | None:
         return service_npub(self.service_nsec) if self.service_nsec else None
+
+    @property
+    def service_fips_ipv6_address(self) -> str | None:
+        return fips_ipv6_address(self.service_npub) if self.service_npub else None
 
     @classmethod
     def from_env(cls) -> Settings:

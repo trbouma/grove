@@ -13,6 +13,7 @@ def render_homepage(
     max_blob_size: int,
     supported_buds: list[str],
     service_npub: str | None,
+    service_fips_ipv6_address: str | None,
 ) -> str:
     """Render a browser-facing server overview with escaped configuration."""
 
@@ -23,6 +24,9 @@ def render_homepage(
         "max_blob_size": escape(_format_size(max_blob_size)),
         "supported_buds": escape(", ".join(f"BUD-{bud}" for bud in supported_buds)),
         "service_npub": escape(service_npub or "Not configured"),
+        "service_fips_ipv6_address": escape(
+            service_fips_ipv6_address or "Not configured"
+        ),
     }
 
     return f"""<!doctype html>
@@ -211,7 +215,12 @@ def render_homepage(
         <dl>
           <div class="row"><dt>Status</dt><dd>Online</dd></div>
           <div class="row"><dt>Server</dt><dd>{values["server_name"]}</dd></div>
-          <div class="row"><dt>Identity</dt><dd>{values["service_npub"]}</dd></div>
+          <div class="row">
+            <dt>Service identity</dt><dd>{values["service_npub"]}</dd>
+          </div>
+          <div class="row">
+            <dt>FIPS IPv6 address</dt><dd>{values["service_fips_ipv6_address"]}</dd>
+          </div>
           <div class="row">
             <dt>Supported BUDs</dt><dd>{values["supported_buds"]}</dd>
           </div>

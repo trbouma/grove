@@ -10,7 +10,7 @@ from coincurve import PrivateKey, PublicKeyXOnly
 from starlette.testclient import TestClient
 
 from grove.config import Settings
-from grove.identity import service_npub
+from grove.identity import fips_ipv6_address, service_npub
 from grove.main import create_app
 
 SERVICE_NSEC = "11" * 32
@@ -20,6 +20,7 @@ SERVICE_NSEC_BECH32 = (
 SERVICE_NPUB = (
     "npub1fu64hh9hes90w2808n8tjc2ajp5yhddjef0ctx4s7zmsgp6cwx4qgy4eg9"
 )
+SERVICE_FIPS_IPV6_ADDRESS = "fd34:da5e:3969:3577:9c48:835a:7f60:8b56"
 
 
 def signing_key() -> PrivateKey:
@@ -105,6 +106,7 @@ def test_browser_homepage_is_friendly_and_keeps_json_api(tmp_path) -> None:
 def test_service_identity_accepts_hex_and_nsec_encoding() -> None:
     assert service_npub(SERVICE_NSEC) == SERVICE_NPUB
     assert service_npub(SERVICE_NSEC_BECH32) == SERVICE_NPUB
+    assert fips_ipv6_address(SERVICE_NPUB) == SERVICE_FIPS_IPV6_ADDRESS
 
 
 def test_service_identity_is_reported_and_bound_to_persistent_data(tmp_path) -> None:
@@ -116,13 +118,17 @@ def test_service_identity_is_reported_and_bound_to_persistent_data(tmp_path) -> 
     identity = information.json()["service_identity"]
     assert identity == {
         "npub": configured.service_npub,
+        "fips_ipv6_address": SERVICE_FIPS_IPV6_ADDRESS,
         "type": "blossom",
         "management": "independent",
         "state": "uncommissioned",
         "descriptor_event_id": None,
         "operator": None,
     }
+    assert "Service identity" in homepage.text
     assert configured.service_npub in homepage.text
+    assert "FIPS IPv6 address" in homepage.text
+    assert SERVICE_FIPS_IPV6_ADDRESS in homepage.text
     sentinel = json.loads(
         (configured.data_dir / "service-identity.json").read_text(encoding="utf-8")
     )

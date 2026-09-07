@@ -17,6 +17,7 @@ grove = "grove.cli:main"
 python = ">=3.11,<3.14"
 coincurve = ">=20.0.0,<22.0.0"
 fastapi = ">=0.115.0,<1.0.0"
+stroma-nostr = { git = "https://github.com/trbouma/stroma.git" }
 uvicorn = { version = ">=0.34.0,<1.0.0", extras = ["standard"] }
 
 [tool.poetry.group.dev.dependencies]
