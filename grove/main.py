@@ -144,6 +144,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def server_information(request: Request):
         information = information_response()
         if "text/html" in request.headers.get("accept", "").lower():
+            identity = information["service_identity"]
             return HTMLResponse(
                 render_homepage(
                     version=__version__,
@@ -153,6 +154,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     supported_buds=information["buds"],
                     service_npub=configured.service_npub,
                     service_fips_ipv6_address=configured.service_fips_ipv6_address,
+                    service_management=identity["management"],
+                    service_state=identity["state"],
                 )
             )
         return information
@@ -167,7 +170,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/health")
     async def health():
-        return {"status": "ok"}
+        return {
+            "status": "ok",
+            "service": "grove",
+            "version": __version__,
+        }
 
     @app.head("/upload")
     async def upload_preflight(

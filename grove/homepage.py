@@ -14,6 +14,8 @@ def render_homepage(
     supported_buds: list[str],
     service_npub: str | None,
     service_fips_ipv6_address: str | None,
+    service_management: str,
+    service_state: str,
 ) -> str:
     """Render a browser-facing server overview with escaped configuration."""
 
@@ -27,6 +29,8 @@ def render_homepage(
         "service_fips_ipv6_address": escape(
             service_fips_ipv6_address or "Not configured"
         ),
+        "service_management": escape(service_management),
+        "service_state": escape(service_state),
     }
 
     return f"""<!doctype html>
@@ -36,7 +40,7 @@ def render_homepage(
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Grove local-first Blossom blob storage">
   <meta name="color-scheme" content="light dark">
-  <link rel="icon" href="/assets/grove-logo.png" type="image/png">
+  <link rel="icon" href="assets/grove-logo.png" type="image/png">
   <title>Grove | Local-first Blossom storage</title>
   <style>
     :root {{
@@ -181,7 +185,7 @@ def render_homepage(
   <main class="shell">
     <header class="topbar">
       <div class="brand">
-        <img src="/assets/grove-logo.png" alt="Grove">
+        <img src="assets/grove-logo.png" alt="Grove">
         <span>Grove Blossom server</span>
       </div>
       <div class="online">Online</div>
@@ -202,7 +206,7 @@ def render_homepage(
         </div>
       </div>
       <div class="tree" aria-label="Server identity">
-        <img src="/assets/grove-logo.png" alt="Grove tree logo">
+        <img src="assets/grove-logo.png" alt="Grove tree logo">
         <div>
           <strong>Blossom storage</strong>
           <span>Content-addressed blob service</span>
@@ -220,6 +224,12 @@ def render_homepage(
           </div>
           <div class="row">
             <dt>FIPS IPv6 address</dt><dd>{values["service_fips_ipv6_address"]}</dd>
+          </div>
+          <div class="row">
+            <dt>Management</dt><dd>{values["service_management"]}</dd>
+          </div>
+          <div class="row">
+            <dt>Identity state</dt><dd>{values["service_state"]}</dd>
           </div>
           <div class="row">
             <dt>Supported BUDs</dt><dd>{values["supported_buds"]}</dd>
@@ -242,7 +252,7 @@ def render_homepage(
       records locally while retaining standard Blossom interoperability.
     </aside>
     <nav class="links" aria-label="Server resources">
-      <a href="/health">Health</a><a href="/docs">API documentation</a>
+      <a href="health">Health</a><a href="docs">API documentation</a>
       <a href="https://trbouma.github.io/grove/">About Grove</a>
       <span class="version">Grove {values["version"]}</span>
     </nav>

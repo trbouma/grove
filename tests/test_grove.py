@@ -89,6 +89,7 @@ def test_browser_homepage_is_friendly_and_keeps_json_api(tmp_path) -> None:
         homepage = client.get("/", headers={"Accept": "text/html"})
         information = client.get("/", headers={"Accept": "application/json"})
         logo = client.get("/assets/grove-logo.png")
+        health = client.get("/health")
 
     assert homepage.status_code == 200
     assert homepage.headers["content-type"].startswith("text/html")
@@ -99,6 +100,11 @@ def test_browser_homepage_is_friendly_and_keeps_json_api(tmp_path) -> None:
     assert information.status_code == 200
     assert information.json()["buds"] == ["01", "02", "06", "11", "12"]
     assert information.json()["service_identity"]["state"] == "unconfigured"
+    assert health.json() == {
+        "status": "ok",
+        "service": "grove",
+        "version": "0.1.0",
+    }
     assert logo.status_code == 200
     assert logo.headers["content-type"] == "image/png"
 
@@ -129,6 +135,12 @@ def test_service_identity_is_reported_and_bound_to_persistent_data(tmp_path) -> 
     assert configured.service_npub in homepage.text
     assert "FIPS IPv6 address" in homepage.text
     assert SERVICE_FIPS_IPV6_ADDRESS in homepage.text
+    assert "Management" in homepage.text
+    assert "independent" in homepage.text
+    assert "Identity state" in homepage.text
+    assert "uncommissioned" in homepage.text
+    assert 'href="health"' in homepage.text
+    assert 'src="/assets/' not in homepage.text
     sentinel = json.loads(
         (configured.data_dir / "service-identity.json").read_text(encoding="utf-8")
     )
