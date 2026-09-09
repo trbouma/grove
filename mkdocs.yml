@@ -40,6 +40,8 @@ nav:
       - How Grove Works: how-grove-works.md
       - Grove and Acorn: acorn-integration.md
       - Protocol Surface: protocol-surface.md
+  - Policy Briefs:
+      - BUD-13 Path-Based Upload: policy-briefs/bud-13-path-upload.md
   - Operate Grove:
       - Getting Started: getting-started.md
       - Production Deployment: deployment.md
