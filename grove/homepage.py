@@ -252,8 +252,8 @@ def render_homepage(
       records locally while retaining standard Blossom interoperability.
     </aside>
     <nav class="links" aria-label="Server resources">
-      <a href="health">Health</a><a href="docs">API documentation</a>
-      <a href="https://trbouma.github.io/grove/">About Grove</a>
+      <a href="health">Health</a>
+      <a href="https://trbouma.github.io/grove/">Docs</a>
       <span class="version">Grove {values["version"]}</span>
     </nav>
   </main>

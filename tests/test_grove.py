@@ -97,6 +97,10 @@ def test_browser_homepage_is_friendly_and_keeps_json_api(tmp_path) -> None:
     assert "https://grove.example" in homepage.text
     assert "Copy server URL" in homepage.text
     assert "Local-first encrypted blob storage" in homepage.text
+    assert '<a href="https://trbouma.github.io/grove/">Docs</a>' in homepage.text
+    assert 'href="docs"' not in homepage.text
+    assert "API documentation" not in homepage.text
+    assert "About Grove" not in homepage.text
     assert information.status_code == 200
     assert information.json()["buds"] == ["01", "02", "06", "11", "12"]
     assert information.json()["service_identity"]["state"] == "unconfigured"
