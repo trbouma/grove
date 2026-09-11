@@ -8,6 +8,10 @@ description: Deploy Grove behind HTTPS with persistent storage, backups, and one
 Grove is intentionally designed for one application process with local SQLite
 and filesystem storage.
 
+This guide describes a standalone Grove instance. When Grove is part of a
+Mainstay instance, Mainstay owns its configuration, data path, start, update,
+and recovery lifecycle; operate it from the Mainstay deployment directory.
+
 ## Deployment shape
 
 ```text
@@ -28,6 +32,10 @@ private interface and enforce the path with a firewall or VPN policy.
 
 ## Start and update
 
+Use a dedicated checkout or release directory for each standalone instance.
+Copy `.env.example` to `.env`, choose a stable data path, and set the public URL
+and service identity before the first start.
+
 ```bash
 docker compose build --pull
 docker compose up -d
@@ -42,9 +50,9 @@ docker compose build --pull
 docker compose up -d --force-recreate
 ```
 
-For a routine source deployment, the included refresh script pulls the latest
-commit, rebuilds and recreates the container, then waits for Grove's health
-check to pass:
+For a routine source deployment, the included refresh script requires a clean
+tracked tree, accepts only a fast-forward update, validates Compose, rebuilds
+and recreates the container, and then waits for Grove's health check to pass:
 
 ```bash
 ./refresh-containers.sh
@@ -55,6 +63,10 @@ Stop the service without deleting its persistent data:
 ```bash
 docker compose down
 ```
+
+Stopping or replacing the container does not retire Grove's service identity
+or delete its data. Treat deletion of the data directory and identity material
+as a separate, explicit retirement operation.
 
 ## Nginx example
 

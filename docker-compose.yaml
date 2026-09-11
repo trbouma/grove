@@ -6,6 +6,7 @@ services:
     image: ${GROVE_IMAGE:-safebox-grove:local}
     container_name: grove
     restart: unless-stopped
+    init: true
     user: "${GROVE_UID:-1000}:${GROVE_GID:-1000}"
     ports:
       - "${GROVE_BIND_ADDRESS:-127.0.0.1}:${GROVE_PORT:-8000}:8000"
@@ -19,3 +20,9 @@ services:
       GROVE_SERVICE_MANAGEMENT: ${GROVE_SERVICE_MANAGEMENT:-independent}
     volumes:
       - "${GROVE_DATA_PATH:-./data}:/data"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=32m
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 30s
