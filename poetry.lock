@@ -1948,8 +1948,8 @@ pycryptodome = ">=3.20,<4"
 [package.source]
 type = "git"
 url = "https://github.com/trbouma/stroma.git"
-reference = "HEAD"
-resolved_reference = "f3c3f13de46595588eb69b7d8a22c71bbfe04d29"
+reference = "main"
+resolved_reference = "ffe13f10555945b32a353ade5c330989a910ac96"
 
 [[package]]
 name = "truststore"
@@ -2530,4 +2530,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.14"
-content-hash = "e60e735e254f58e79745c0bd536ae031a0c91425dc506915ef94413428cb835a"
+content-hash = "e377ddc835781236858f2a1906984550de97069a570fa422cd243fe67114eab2"
